@@ -8,48 +8,49 @@
 * Files can save from 0 Bytes to 5 TB.
 * No storage Limits.
 * Files are stored in Buckets (a folder in a cloud).
-* S3 is a universal namespace, the name must be unique globally. So you **cannot** have the same name as someone else.
+* S3 buckets in a universal namespace, the name must be unique globally. So you **cannot** have the same name as someone else.
 * Sample of an S3 URL: ```https://s3-eu-west-1.amazonaws.com/yourbucket```.
 * When you upload an object in S3 you get an HTTP 200 OK code back.
 
 ### Data Consistency for S3
 
-* It's consistent in reads after a write on new objects.
-* It's eventually consistent for overwriting and deletes (this means it can take some time to propagate)
+* It's consistent in reads after a write on new objects(PUT).
+* It's eventually consistent for overwriting and deletes(PUTS and DELETES) (this means it can take some time to propagate)
 * S3 is spread across multiple AZ's
 
 ### Components
 
-* S3 is an object. Objects consist of:
-  * Key (name of the object)
-  * Value (data)
-  * Version ID (Used on versioning)
-  * Metadata (a set of data that describes and gives information about the object data.)
+* S3 Objects consist of:
+  * Key (name of object)
+  * Value (binary data)
+  * Version ID
+  * Metadata
   * Subresources:
-    * Access Control List (Decide who can access files)
+    * Access Control List
     * Torrent (Not an exam topic)
 
 ### Basics
 
 * S3 SLA: 99.9% availability
 * S3 is built for 99.99%
-* S3 guarantees 11x9s (99.999999999) durability for S3 information.
+* S3 guarantees 11x9s (99.999999999) durability for objects.
 * Tiered Storage (classes) available
-* You can have lifecycle management
+* Lifecycle management (move between Tiers or e.g. Glacier)
 * Versioning
 * Supports [multi-part upload](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html)
 * Encryption
 * Access control (permissions on single files) and bucket policies (permissions on buckets)
+* MFA option (multi-factor auth) delete from S3
 
 ### [S3 Storage Tiers](https://aws.amazon.com/s3/storage-classes/)
 
 * S3 standard: 99.99% availability 11x9s durability (it sustains the loss of 2 facilities concurrently)
-* S3 IA: (Infrequently Accessed): For data that is accessed less frequently, but needs rapid access. You are charged a retrieval fee per GB retrieved
+* S3 IA: (Infrequently Accessed): For data that is accessed less frequently, but needs rapid access. You are charged a retrieval fee
 * S3 One Zone IA: Like S3 IA but data is stored only in one AZ
 * Glacier: Most cheap, used for archival only.
   * Expedited: few minutes for retrieval
   * Standard: 3-5 hours for retrieval
-  * Bulk: 5-12 hours for retrieval
+  * Bulk: 5-12 hours for retrieval (Deep Archive)
   * It encrypts data by default
   * Regionally availability
   * Designed with 11x9s durability, like S3
@@ -60,9 +61,10 @@ S3 is charged for:
 
 * Storage
 * Requests
-* Storage management pricing
+* Storage management pricing (Tiers)
 * Data Transfer Pricing
 * Transfer acceleration (it's using CloudFront the AWS CDN) using edge locations
+* Cross Region Replication Pricing
 
 ### [Server side Encryption and ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html)
 
@@ -75,8 +77,8 @@ S3 is charged for:
 
 ### [S3 Version Control](https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html)
 
-* Once you enable versioning, you can't disable it, you can only suspend it. A way of disabling it is to delete the bucket and re-create it
-* Every time you update an object, it will become private by default.
+* Once you enable versioning on bucket, you can't disable it, you can only suspend it
+* Every time you update an object, it will become private by default
 * It integrates with Lifecycle rules.
 * You pay for each version you have
 * Delete an object:
@@ -101,7 +103,7 @@ S3 is charged for:
 
     `aws s3 cp --recursive s3://alessio-casco-versioning s3://alessio-casco-versioning-replica-sydney`
 * If you delete an object in the primary bucket, the delete action and markers won't be done or replicated in your remote bucket, this is a security function.
-Only creations and modifications are replicated to the bucket in the other regions NOT the delete
+Only creations and modifications are replicated to the bucket in the other regions, NOT the delete
 * You can't replicate over multiple buckets, the maps are always 1-to-1
 
 ## [CloudFront](https://aws.amazon.com/cloudfront/)
@@ -112,9 +114,10 @@ Only creations and modifications are replicated to the bucket in the other regio
 
 * Key terminology about CloudFront:
   * Edge Location: Is the location where the content is cached (separate from AWS AZ's or regions)
-    Be aware that you can also write on edge locations, is not ready only.
-  * Invalidating (erasing) the cache costs money.
-  * Origin: Is the source of the files the CDN will distribute. An origin can be an EC2 instance, an S3 bucket, an Elastic Load Balancer or Route53, you can also have your own origin, it not mandatory that is within AWS.
+    Be aware that you can also write on edge locations, is not read only
+  * Invalidating (erasing) the CDN cache costs money (exam topic)
+  * Origin: Is the source of the files the CDN will distribute. An origin can be an EC2 instance, an S3 bucket, an Elastic Load Balancer or Route53, 
+  you can also have your own origin, it not mandatory that is within AWS.
   * Distribution: Is the name AWS calls CDN's.
     * You can Have two types: Web that is for generic web contents and RTMP that is for video streaming
     * TTL: time to live of the cached object.
@@ -139,19 +142,19 @@ Only creations and modifications are replicated to the bucket in the other regio
 
 ### [Amazon Storage Gateway](https://aws.amazon.com/storagegateway/)
 
-What's an Amazon Storage Gateway: AWS Storage Gateway connects an on-premises software appliance with cloud-based storage to provide seamless integration with data security features between your on-premises IT environment and the AWS storage infrastructure.
+Storage Gateway: AWS Storage Gateway connects an on-premises software appliance with cloud-based storage to provide seamless integration with data security features between your on-premises IT environment and the AWS storage infrastructure.
 
 * File Gateway: For flat files, stored directly in S3. You can NFS Mount points
-* VOlume gateway (iSCSI): Block-based storage
-  * Store volume (you keep all your data on prem)
-  * Cached Volumes (you keep only the most recent data on prem)
+* Volume gateway (iSCSI): Block-based(ex. virtual HDD ) storage
+  * Store volume (you keep all your data on prem and asynchronously backed up to S3)
+  * Cached Volumes (you keep only the most recent data on prem, but Entire Dataset on S3)
 Tape Gateway (VTL): Virtual tapes
 
 ### [Snowball](https://aws.amazon.com/snowball/)
 
 Import Export is still available and was the first version of snowball, you used to ship your drives to AWS
 
-Snowball is (an appliance) a petabyte-scale data transport solution that uses devices designed to be secure to transfer large amounts of data into and out of the AWS Cloud
+Snowball is (an appliance) a petabyte-scale data transport solution that uses devices designed to be secure to transfer large amounts of data INTO and OUT of the AWS Cloud
 
 Snowball edge: is a 100TB data transfer device with onboard storage-computer capabilities. It's like an AWS DC in a box
 
