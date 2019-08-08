@@ -1,0 +1,7 @@
+
+
+
+removed raid arr from ec2
+removed load balancers from ec2
+removed autoscaling groups from ec2
+removed lambda from ec2
