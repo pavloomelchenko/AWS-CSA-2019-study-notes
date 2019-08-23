@@ -1,5 +1,8 @@
 # CHAPTER 7 | VPC
 
+
+Day of exam and day before you should build your own VPC from memory for successfull passing!
+
 ## VPC
 
 ### [Wat's a VPC](https://aws.amazon.com/vpc/)
@@ -12,47 +15,87 @@ Amazon Virtual Private Cloud (Amazon VPC) lets you provision a logically isolate
 
 * A Virtual Private Cloud: A logically isolated virtual network in the AWS cloud. You define a VPC’s IP address space from ranges you select.
 * Subnet: A segment of a VPC’s IP address range where you can place groups of isolated resources.
-* Internet Gateway: The Amazon VPC side of a connection to the public Internet.
+* Internet Gateway: The Amazon VPC side of a connection to the public Internet. Single one per VPC!
 * NAT Gateway: A highly available, managed Network Address Translation (NAT) service for your resources in a private subnet to access the Internet.
-* Virtual private gateway: The Amazon VPC side of a VPN connection.
+* Virtual private gateway: The  VPC side of a VPN connection!
 * Peering Connection: A peering connection enables you to route traffic via private IP addresses between two peered VPCs.
 * VPC Endpoints: Enables private connectivity to services hosted in AWS, from within your VPC without using an Internet Gateway, VPN, Network Address Translation (NAT) devices, or firewall proxies.
 * Egress-only Internet Gateway: A stateful gateway to provide egress only access for **IPv6** traffic from the VPC to the Internet.
 
-![VPC_Diagram](https://docs.aws.amazon.com/vpc/latest/userguide/images/default-vpc-diagram.png)
+![VPC_Diagram](https://www.mattbutton.com/images/2017/vpc-with-private-and-public-subnets.png)
+![VPC_Diagram](https://neonta.com/wp-content/uploads/2017/01/vpc-diagram.png)
 
 * You can have multiple VPC in a region (default up to 5).
 * You can have 1 internet gateway per VPC.
-* 1 Subnet = 1 AZ
+* Multiple Subnets in 1 AZ (not possible same subnet in 2 AZs)
 * Security groups are Stateful, instead, Network ACLs are stateless.
+* Security groups do not span multiple VPCs
+
+Ex. your public web-servers in one subnet, but sensitive backend components and databases in another subnet.
+Additionally you can create hardware VPN to connect your datacenter to VPC.
 
 ### Default VPC
 
-* Amazon provides a default VPC to immediately deploy instances.
-* All Subnets in default VPC have a route out to the internet.
+* Amazon provides a default VPC to immediately deploy instances, all Subnets in it have a route out to the internet.
 
 ### VPC Peering
 
 * You can peer one VPC to another VPC using private IP subnets.
-* You can peer VPC's with others AWS accounts as well as with other VPC's in the same account.
+* You can peer VPC's with others AWS accounts as well as same account.
 
 ### How to VPC Peering
 
 * Overlapping CIDR Blocks is not supported: You can't connect two VPC's that have the same CIDR.
-* Transitive Peering is not supported:
+* Transitive Peering is not supported (if network A peers to B, and B peers to C, then A not able to peer C (but able by creating direct link between A and C)
 
-    You have a VPC peering connection between VPC A and VPC B (pcx-aaaabbbb), and between VPC A and VPC C (pcx-aaaacccc). There is no VPC peering connection between VPC B and VPC C. You cannot route packets directly from VPC B to VPC C through VPC A.
 
-    ![transitive-peering](https://docs.aws.amazon.com/vpc/latest/peering/images/transitive-peering-diagram.png)
 
-### Build Your Own Custome VPC
+###  NAT Instances and NAT Gateways
 
-* [VPC and Subnet Sizing](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-subnet-basics) The first four IP addresses and the last IP address in each subnet CIDR block are not available for you to use, and cannot be assigned to an instance.
+NAT Instance - is a single EC2 instance, but Gateway is highly available.
+Allows your private subnets to communicate to internet without becoming public.
+
+NAT Instances: when creating disable Source/Destination checks , NAT instance must be in public subnet,
+there must be route from privat subnet to NAT instance.
+
+Nat Gateways: redundant inside of AZ, preffered by enterprise , 5Gbps to 45Gbps, no need to patch, no associated with security groups,
+automatically assigned IP address; dont foget to update route tbl to point to Nat Gateway;
+Suggestion: use separate Nat Gateway in each AZ (to prevent single AZ Nat Gateway failure)
+
+
+
+
+
+
+### Build Your Own Custom VPC
+
+
+* when create VPC a default Route Table , NACL and default security group created
+* By default subnets are associated with main route table (so if we put route to internet in main root table, then every subnet will be public). That's why main route table should be private. And separate route table to be public.
+* us-east-1a (and other AZ) can be different from us-east-1a in DIFFERENT AWS account
+
+
+* [VPC and Subnet Sizing](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-subnet-basics) The first four IP addresses and the last IP address in each subnet CIDR block are not available for you to use (5 addresses total), and cannot be assigned to an instance.
 
 * For Nat Instances you have to disable the [Source/Destination Checks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#EIP_Disable_SrcDestCheck).
 * Use [Nat Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html#nat-gateway-basics) instead of Nat Instances
 
     ![nat-gateway](https://docs.aws.amazon.com/vpc/latest/userguide/images/nat-gateway-diagram.png)
+
+
+### NACL
+By default new ACL has only DENY rules.
+Rules evaluated in order(ID order)
+Network ACLs evaluated before Security Groups
+
+
+VPC comes with default ACL and by detault it allows all inbound/outbound traffic!
+With ACL its possible to block specific IPs (but imposible with Security Groups)
+ACL can be associated with multiple Subnets (but Subnet with single ACL) 
+NACL have inbound and outbound separate rules, each with Allow or Deny.
+ACLs stateless (you need to define inbound/outbound rules)
+
+
 
 ### [Network Access Control Lists vs Security Groups](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Security.html)
 
