@@ -117,6 +117,17 @@ ACLs stateless (you need to define inbound/outbound rules)
 ### [VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html)
 
 VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen destination.
+You cannot enable Flow Logs for peered VPC that's not in your accounts
+Instances with Amazon DNS traffic not monitored
+Windows Activation traffic not monitored
+Traffic to metadata/userdata instance not monitored
+DHCP traffic not monitored
+Traffic to the reserved addresses of VPC router not monitored
+
+
+### [Direct Connect]
+Connects your DC to AWS (stable,reliable and secure connections (contra regular VPN))
+
 
 ### [VPC Enpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
 
