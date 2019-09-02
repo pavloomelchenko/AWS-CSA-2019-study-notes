@@ -1,24 +1,9 @@
-# CHAPTER 5 | Route53
+# Route53
 
 ## DNS
 
 _You won't be questioned in the exam about the next sections (up to ALIAS record).
 It's just for your knowledge and very good for better understanding the course._
-
-### [What's DNS](https://www.cloudflare.com/learning/dns/what-is-dns/)
-
-The Domain Name Systems (DNS) is the phonebook of the Internet. Humans access information online through domain names, like nytimes.com or espn.com. Web browsers interact through Internet Protocol (IP) addresses. DNS translates domain names to IP addresses so browsers can load Internet resources.
-
-### [IPv4 vs IPv6](https://www.guru99.com/difference-ipv4-vs-ipv6.html)
-
-* IPv4 is a 32-Bit IP Address.
-* IPv6 is 128 Bit IP Address and was created to fulfil the need for more Internet addresses.
-
-### [Top Level Domains:](https://en.wikipedia.org/wiki/Top-level_domain)
-
-A top-level domain is one of the domains at the highest level in the hierarchical Domain Name System of the Internet (```.com``` ```.net``` ```.org``` as an example).
-
-In the case of ```.co.uk```, ```.co``` is the second level domain and ```.uk``` is the top level domain
 
 ### [SOA Record](https://en.wikipedia.org/wiki/SOA_record)
 
@@ -59,7 +44,7 @@ google.com.        2073    IN    NS    ns3.google.com.
 [...]
 ```
 
-### [A Record](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/)
+### [A Record !](https://www.cloudflare.com/learning/dns/dns-records/dns-a-record/)
 
 The ‘A’ stands for ‘address’ and this is the most fundamental type of DNS record, it indicates the IP address of a given domain
 
@@ -109,11 +94,11 @@ In AWS you have to use ALIAS records to point your root domain to other DNS reco
 
 ### [Routing policies available in AWS](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html)
 
-* Simple routing policy: Use for a single resource that performs a given function for your domain. You can have 1 record with multiple addresses.
+* Simple routing policy - random server returned form multiple ones mapped to single NS record
 * Weighted routing policy: Use to route traffic to multiple resources in proportions that you specify. You can send 40% of the traffic on one IP and 60% to another IP.
-* Latency routing policy: Use when you have resources in multiple AWS Regions and you want to route traffic to the region that provides the best latency.
+* Latency routing policy: Use when you have servers in multiple AWS Regions and you want to route traffic to the server that provides the best latency.
 * Failover routing policy: Use when you want to configure active-passive failover.
 You need to create a health check before.
 * Geolocation routing policy: Use when you want to route traffic based on the location of your users.
-* Multivalue answer routing policy: Use when you want Route 53 to respond to DNS queries with up to eight healthy records selected at random.
-* Geoproximity routing policy: Use when you want to route traffic based on the location of your resources and, optionally, shift traffic from resources in one location to resources in another.
+* Multivalue answer routing policy: Use when you want Route 53 to respond to DNS queries with up to eight healthy records selected at random. Also possible to use healthchecks (this will exclude unhealthy servers from response)
+* Geoproximity routing policy: Use when you want to route traffic based on the location of your resources and, optionally, shift traffic from resources in one location to resources in another. This is complex(manually constructed) set of links, that directs traffic based on locations of users, locations of your servers, biases.
