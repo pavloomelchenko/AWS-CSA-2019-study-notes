@@ -1,6 +1,3 @@
-# CHAPTER 7 | VPC
-
-
 Day of exam and day before you should build your own VPC from memory for successfull passing!
 
 ## VPC

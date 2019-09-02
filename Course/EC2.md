@@ -1,5 +1,3 @@
-# CHAPTER 4 | EC2 The Backbone of AWS
-
 ## EC2
 
 ### [What's EC2](https://aws.amazon.com/ec2/)

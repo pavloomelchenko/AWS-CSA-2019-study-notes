@@ -1,5 +1,3 @@
-# CHAPTER 3 | IAM Identity Access Management
-
 ## [What's IAM](https://aws.amazon.com/iam/)
 
 Allows you to manage users and their level of access to the AWS console.
@@ -42,11 +40,9 @@ You can customize the URL used by users to sign-in
 You can set a billing alarm
 
 
-# CHAPTER 3 | S3 Object Storage and CDN
+## S3
 
 _[!!! Read the S3 FAQs before the exam !!!](https://aws.amazon.com/s3/faqs/)_
-
-## S3
 
 ### [What's S3](https://aws.amazon.com/s3/)
 

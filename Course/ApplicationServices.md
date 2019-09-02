@@ -1,4 +1,4 @@
-# CHAPTER 8 | Application Services
+## Application Services:
 
 ## [SQS](https://aws.amazon.com/sqs/)
 

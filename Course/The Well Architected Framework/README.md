@@ -1,4 +1,4 @@
-# CHAPTER 9 | The Well Architected Framework
+# The Well Architected Framework
 
 ## Best Practices
 
